@@ -20,7 +20,7 @@ def linear_regression(X, w, b):
     return torch.matmul(X, w) + b
 
 
-def squared_loss(y_hat: torch.Tensor, y: torch.Tensor):
+def squared_loss(y_hat: torch.Tensor, y: torch.Tensor) -> torch.Tensor:
     """Squared loss."""
     return (y_hat - y.reshape(y_hat.shape)) ** 2 / 2
 
@@ -37,7 +37,7 @@ def sgd(params: list, lr: float, batch_size: int):
 def dataloader(features: torch.Tensor, labels: torch.Tensor, batch_size: int):
     """A generator function to yield batches of features and labels."""
     num_examples = len(features)
-    indices = list(range(num_examples))
+    indices = list(range(num_examples)) # 生成一個包含所有樣本索引的列表，這裡的num_examples是指特徵張量的第一維大小，即樣本數量
     r.shuffle(indices)  # shuffle the data
     for i in range(0, num_examples, batch_size):
         batch_indices = torch.tensor(indices[i : min(i + batch_size, num_examples)])
@@ -56,14 +56,17 @@ def synthesize_linear_data(w: torch.Tensor, b: float, num_examples: int):
 
 true_w = torch.tensor([2, -3.4])
 true_b = 4.2
-features, labels = synthesize_linear_data(true_w, true_b, 1000)
+features, labels = synthesize_linear_data(true_w, true_b, 1000) # 生成1000個隨機樣本的線性數據
 batch_size = 16
 
+# features是一個1000x2的張量，labels是一個1000x1的張量，這裡打印了第一個樣本的特徵和標籤。
 print("features:", features[0], "\nlabel:", labels[0])
+# features: tensor([-0.0299, -0.0300])
+# label: tensor([4.2543])
 
 # 超參數設定
 learning_rate = 0.03
-num_epochs = 3
+num_epochs = 10
 
 # model parameters
 net = linear_regression
