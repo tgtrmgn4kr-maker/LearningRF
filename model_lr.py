@@ -22,9 +22,9 @@ def load_array(data_arrays: tuple, batch_size: int, is_train: bool = True):
 true_w = torch.tensor([2, 3.4])
 true_b = 4.2
 
-features, labels = synthesize_linear_data(
-    true_w, true_b, 1000
-)  # 生成1000個在二維空間中的線性數據，特徵維度為2，標籤為1
+# 生成1000個在二維空間中的線性數據，特徵維度為2，標籤為1
+features, labels = synthesize_linear_data(true_w, true_b, 1000)
+
 batch_size = 5
 
 # 使用load_array函數將生成的特徵和標籤數據轉換為PyTorch的DataLoader對象，這樣可以方便地進行批量數據加載和迭代訓練模型

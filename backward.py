@@ -81,5 +81,5 @@ b.backward()
 
 print(a.grad == b/a)  # 因為b是a的函數，對a求導得到db/da = b/a，所以a.grad應該等於b/a
 
-if a.grad is not None:
+if a.grad is not None: 
     a.grad.zero_()
