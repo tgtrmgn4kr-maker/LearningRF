@@ -14,7 +14,7 @@ def synthesize_linear_data(w, b, num_examples):
         0, 1, (num_examples, len(w))
     )  # mu=0, sigma=1 size=(num_examples*len(w))
     y = X @ w + b  # (1000, 2) @ (2,) + (1,) -> (1000, 1)
-    y += torch.normal(0, 0.01, y.shape)
+    y += torch.normal(0, 0.01, y.shape) # y.shape=(1000, 1) noise with mu=0, sigma=0.01
     return X, y.reshape((-1, 1))
 
 
