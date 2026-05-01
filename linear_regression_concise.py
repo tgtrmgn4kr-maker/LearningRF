@@ -4,9 +4,9 @@ os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 
 import random as r
 
-import matplotlib.pyplot as plt
 import torch
 from torch import nn
+
 
 def synthesize_linear_data(w, b, num_examples):
     """Generate y = Xw + b + noise."""
@@ -27,6 +27,7 @@ def dataloader(features, labels, batch_size):
         batch_indices = torch.tensor(indices[i : min(i + batch_size, num_examples)])
         yield features[batch_indices], labels[batch_indices]
 
+
 def load_array(data_arrays, batch_size, is_train=True):
     """Construct a PyTorch data iterator."""
     dataset = torch.utils.data.TensorDataset(*data_arrays)
@@ -40,16 +41,16 @@ features, labels = synthesize_linear_data(true_w, true_b, 1000)
 batch_size = 10
 data_iter = load_array((features, labels), batch_size)
 
-print(next(iter(data_iter))) # 一組 features 和 labels 的小批量数据
+print(next(iter(data_iter)))  # 一組 features 和 labels 的小批量数据
 
 net = nn.Sequential(nn.Linear(2, 1))
-'''
+"""
 Sequential是一個容器，將多個層組合在一起，按照順序執行。
 在這裡，我們使用了一個線性層nn.Linear(2, 1)，輸入特徵的維度是2，輸出特徵的維度是1。
-'''
+"""
 
 print(net[0].weight.data)  # 隨機初始化的權重
-print(net[0].bias.data)    # 隨機初始化的偏置
+print(net[0].bias.data)  # 隨機初始化的偏置
 
 loss = nn.MSELoss()  # 均方誤差損失函數
 trainer = torch.optim.SGD(net.parameters(), lr=0.03)  # 隨機梯度下降優化器，學習率為0.03
