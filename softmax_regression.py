@@ -244,7 +244,7 @@ def train_epoch(net, train_iter, loss, updater):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     if isinstance(net, torch.nn.Module):
         net.train()  # 将模型设置为训练模式
-    net.to(device)
+        net.to(device)
     metric = Accumulator(3)  # 损失总和、正确预测数、预测总数
     for X, y in train_iter:
         X, y = X.to(device), y.to(device)
@@ -274,7 +274,7 @@ def train(net, train_iter, test_iter, loss, num_epochs, updater):
         train_metrics = train_epoch(net, train_iter, loss, updater)
         test_acc = evaluate_accuracy(net, test_iter)
         animator.add(epoch + 1, train_metrics + (test_acc,))
-    train_loss, train_acc = train_metrics
+        print(f"epoch {epoch + 1}, loss {train_metrics[0]:.3f}, train acc {train_metrics[1]:.3f}, test acc {test_acc:.3f}")
 
 
 #  assert train_loss < 0.5, f"训练损失过大: {train_loss}"
