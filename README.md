@@ -8,3 +8,6 @@ Learning RF
 - `draw.py`: Drawing the chart of the probabilities of getting points when rolling a die
 - `linear_regression.py`: Learning what `y=Xw+b` is
 - `how_it_works.py`: Learning how to train a model with SGD(Stochastic Gradient Descent)
+- `activate_functions.py`: Learning the activate functions
+- `softmax_regression.py`, `softmax_regression_concise.py`: Learning how to use Softmax
+- `mlp.py`, `mlp_concise.py`: Learning how to make a multilayer neural network
