@@ -247,7 +247,7 @@ def train_epoch(net, train_iter, loss, updater):
         net.to(device)
     metric = Accumulator(3)  # 损失总和、正确预测数、预测总数
     for X, y in train_iter:
-        X, y = X.to(device), y.to(device)
+        X, y = X.to(device), y.to(device)  # 将数据移动到相同的设备
         y_hat = net(X)
         loss_value = loss(y_hat, y)
         if isinstance(updater, torch.optim.Optimizer):
@@ -260,6 +260,7 @@ def train_epoch(net, train_iter, loss, updater):
         metric.add(loss_value.sum().item(), accuracy(y_hat, y), y.numel())
     # 返回训练损失和训练精度
     return metric[0] / metric[2], metric[1] / metric[2]
+
 
 
 def train(net, train_iter, test_iter, loss, num_epochs, updater):
