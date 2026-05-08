@@ -152,7 +152,7 @@ def train(
     loss = torch.nn.MSELoss()
     input_shape = train_features.shape[-1]
     # Single layer model
-    net = nn.Sequential(nn.Linear(input_shape, 1, bias=False)) # No bias
+    net = nn.Sequential(nn.Linear(input_shape, 1, bias=False))  # No bias
 
     batch_size = min(10, train_labels.shape[0])
     train_iter = load_array((train_features, train_labels), batch_size)
@@ -188,91 +188,3 @@ def train(
     print("-" * 50)
 
     return evaluate_loss(net, train_iter, loss), evaluate_loss(net, test_iter, loss)
-
-
-def main():
-    max_degree = 20
-    n_train, n_test = 100, 100
-    true_w = np.zeros(max_degree)
-    true_w[0:4] = np.array([5, 1.2, -3.4, 5.6])
-    # y = 0.93x^3 - 1.7x^2 + 1.2x + 5
-
-    features = np.random.normal(size=(n_train + n_test, 1))  # 200*1
-
-    np.random.shuffle(features)
-
-    # 多项式特征 200*20 (數量*維度)，每一列是features的不同次幂，從0次方到19次方
-    poly_features = np.power(features, np.arange(max_degree).reshape(1, -1))
-  #  for i in range(max_degree):
-   #     poly_features[:, i] /= math.gamma(i + 1)
-    # ax^20/20! + bx^19/19! + ... + 5x^4/4! + w0
-
-    labels = poly_features @ true_w  # 200*1
-    # 0x^0 + 5x^1/1! + 1.2x^2/2! - 3.4x^3/3! + 5.6x^4/4! + 0x^5/5! + ... + 0x^19/19!
-
-    # 加入噪声
-    labels += np.random.normal(scale=0.1, size=labels.shape)
-
-    # 转换为张量
-    true_w, features, poly_features, labels = [
-        torch.tensor(x, dtype=torch.float32)
-        for x in [true_w, features, poly_features, labels]
-    ]
-
-    # 为了演示过拟合，训练不同阶数的多项式
-    print("Training models with different polynomial degrees:")
-    print("=" * 50)
-
-    for degree in [1, 2, 3, 4, 20]:
-        print(f"\nTraining with degree {degree}")
-        train(
-            poly_features[:n_train, :degree],  # train features 100*degree
-            poly_features[n_train:, :degree],  # test features 测试集
-            labels[:n_train],  # train labels 100
-            labels[n_train:],  # test labels 测试集
-            num_epochs=1000,
-            lr=0.05 if degree <= 4 else 0.01,  # 高阶需要更小的学习率
-        )
-    """
-    y_hat = ax^20/20! + bx^19/19! + ... +  cx^2 + dx
-    y = labels
-    x = features
-
-
-    degree=0:
-        Fitting a y=a function to the data, the model is underfitting the data.
-        The training error is much lower than the test error, indicating that the model is overfitting the training data.
-        Weight for degree 0: [[3.7750416]]
-        Final train loss: 1.015269
-        Final test loss: 1.881182
-
-    degree=1:
-        Fitting a y=ax^2+bx function to the data, the model has a good degree of overfitting.
-        The training error is lower than the test error, indicating that the model is not overfitting the training data.
-        Weight for degree 1: [[3.7509744 2.8200152]]
-        Final train loss: 0.345824
-        Final test loss: 0.661534
-
-     degree=3:
-        Fitting a y=ax^3+bx^2+cx+d function to the data, the model has a good degree of overfitting.
-        The training error is lower than the test error, indicating that the model is not overfitting the training data.
-        Weight for degree 3: [[ 5.0132146  1.1723006 -3.4206572  5.6454163]]
-        Final train loss: 0.001001
-        Final test loss: 0.001159 (The least overfitting degree)
-
-    degree=19:
-        Fitting a y=ax^20/20! function to the data, the model has a very low degree of overfitting.
-        The training error is much higher than the test error, indicating that the model is underfitting the training data.
-        Weight for degree 19: [[ 4.9944634   1.2118727  -3.3124006   5.3569336  -0.43754876  1.3321121
-        0.13946132  0.2867895   0.03748589 -0.03114692 -0.04266368 -0.03254896
-        -0.04532626 -0.09981028 -0.03004296 -0.07589376  0.01814501  0.098629
-        -0.15979226 -0.19215417]]
-        Final train loss: 0.001053
-        Final test loss: 0.001234
-    """
-
-    plt.show()
-
-
-if __name__ == "__main__":
-    main()
