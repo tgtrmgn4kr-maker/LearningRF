@@ -71,7 +71,35 @@ def download_all():
 def log_rmse(net, features, labels):
     "為了在取對數時穩定該值，將小於1的數值取1"
     clipped_preds = torch.clamp(net(features), 1, float('inf'))
-    rmse = torch.sqrt(loss(clipped_preds.log(), labels.log()))
+    rmse = torch.sqrt(loss(torch.log(clipped_preds), torch.log(labels)))
+    return rmse.item()
+
+def train(net, train_features, train_labels, test_features, test_labels,
+          num_epochs, learning_rate, weight_decay, batch_size):
+    train_ls, test_ls = [], []
+    train_iter = d2l.load_array((train_features, train_labels), batch_size)
+    optimizer = torch.optim.Adam(
+        net.parameters(), lr=learning_rate, weight_decay=weight_decay
+    )
+    for epoch in range(num_epochs):
+        for X, y in train_iter:
+            optimizer.zero_grad()
+            loss_value = loss(net(X), y)
+            loss_value.backward()
+            optimizer.step()
+        train_ls.append(log_rmse(net, train_features, train_labels))
+        if test_labels is not None:
+            test_ls.append(log_rmse(net, test_features, test_labels))
+    return train_ls, test_ls
+
+def get_kaggle_data(k, i, X, y):
+    fold_size = X.shape[0] // k
+    X_train, y_train = None, None
+    for j in range(k):
+        idx = slice(j * fold_size, (j + 1) * fold_size)
+        X_part, y_part = X[idx, :], y[idx]
+        if j == i:
+            pass
 
 def main():
 
@@ -115,7 +143,7 @@ def main():
         train_data.SalePrice.values.reshape(-1, 1), # type: ignore
         dtype=torch.float32
     )
-
+    global loss
     loss = nn.MSELoss()
     in_features = train_features.shape[1]
 
@@ -123,5 +151,6 @@ def main():
         nn.Linear(in_features, 1)
     )
 
-
+if __name__ == '__main__':
+    main()
 
