@@ -66,7 +66,12 @@ def main():
     plt.figure(figsize=(12, 7), dpi=160)
     plt.plot(x, y, label='True Value', marker="X")
     if net.predict is not None:
-        plt.plot(x[:,None], net.predict.detach().cpu().numpy(), label='Predict Value', marker="o")
+        plt.plot(
+            x[:,None],
+            net.predict.detach().cpu().numpy(),
+            label='Predict Value',
+            marker="o"
+        )
     plt.xlabel("x")
     plt.ylabel("cos(x)")
     plt.xticks(size=15)
